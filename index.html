@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Щоденник фітнес-тренувань — ЛР №1 (Варіант 15)</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Семантичний тег 1: Шапка сайту -->
+  <header class="site-header">
+    <div class="container header-content">
+      <div>
+        <h1>🏋️‍♂️ FitDiary: Щоденник фітнес-тренувань</h1>
+        <p class="subtitle">Контроль навантажень, вправ та тижневого прогресу</p>
+      </div>
+      <!-- Семантичний тег 2: Навігація -->
+      <nav class="header-nav">
+        <a href="#workout-form-section">Форма</a>
+        <a href="#stats-section">Статистика</a>
+        <a href="#history-section">Історія</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Семантичний тег 3: Основний вміст сторінки -->
+  <main class="container main-layout">
+    
+    <!-- Ліва колонка: Форма додавання / редагування тренування -->
+    <!-- Семантичний тег 4: Тематичний розділ -->
+    <section id="workout-form-section" class="card form-section">
+      <h2 id="form-title">Додати нове тренування</h2>
+      
+      <form id="workout-form" novalidate>
+        <input type="hidden" id="workout-id">
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="workout-date">Дата тренування *</label>
+            <input type="text" id="workout-date" name="date" placeholder="РРРР-ММ-ДД (напр. 2026-10-31)" required>
+            <span class="error-message" id="error-date"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="workout-duration">Тривалість (хв) *</label>
+            <input type="text" id="workout-duration" name="duration" placeholder="Напр. 60" required>
+            <span class="error-message" id="error-duration"></span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="workout-title">Назва / Фокус тренування *</label>
+          <input type="text" id="workout-title" name="title" placeholder="Напр. Силове: Груди та трицепс" required>
+          <span class="error-message" id="error-title"></span>
+        </div>
+
+        <!-- Динамічний блок вправ -->
+        <div class="exercises-Block">
+          <div class="exercises-header">
+            <h3>Виконані вправи *</h3>
+            <button type="button" id="add-exercise-btn" class="btn btn-secondary">+ Додати вправу</button>
+          </div>
+          <p class="field-hint">Вкажіть назву, кількість підходів, повторень та робочу вагу (кг, 0 — власна вага).</p>
+          
+          <!-- Контейнер, куди вправи додаються виключно через DOM -->
+          <div id="exercises-container" class="exercises-container"></div>
+          <span class="error-message" id="error-exercises"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="workout-notes">Нотатки (самопочуття, пульс тощо)</label>
+          <textarea id="workout-notes" name="notes" rows="2" placeholder="Необов'язковий коментар..."></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" id="submit-btn" class="btn btn-primary">Зберегти тренування</button>
+          <button type="button" id="cancel-edit-btn" class="btn btn-outline hidden">Скасувати редагування</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Права колонка: Статистика, ціль та історія тренувань -->
+    <div class="right-column">
+      
+      <!-- Семантичний тег 5: Бічна/додаткова аналітична панель -->
+      <aside id="stats-section" class="card stats-section">
+        <div class="goal-box">
+          <div class="goal-header">
+            <div>
+              <h3>🎯 Тижнева ціль тренувань</h3>
+              <p class="goal-subtext" id="goal-status-text">Виконано 0 з 3 тренувань за останні 7 днів</p>
+            </div>
+            <div class="goal-input-wrap">
+              <label for="weekly-goal-input">Ціль/тиждень:</label>
+              <input type="number" id="weekly-goal-input" min="1" max="14" value="3">
+            </div>
+          </div>
+          <div class="progress-bar-track">
+            <div id="goal-progress-bar" class="progress-bar-fill" style="width: 0%;"></div>
+          </div>
+        </div>
+
+        <h3>📊 Статистика за обраною вибіркою</h3>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <span class="stat-label">Тренувань</span>
+            <strong class="stat-value" id="stat-total-workouts">0</strong>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Загальний час</span>
+            <strong class="stat-value" id="stat-total-duration">0 хв</strong>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Усього підходів</span>
+            <strong class="stat-value" id="stat-total-sets">0</strong>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Загальний тоннаж</span>
+            <strong class="stat-value" id="stat-total-volume">0 кг</strong>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Панель фільтрації, пошуку та список історії -->
+      <section id="history-section" class="card history-section">
+        <h2>📋 Історія тренувань</h2>
+
+        <!-- Панель пошуку та фільтрів -->
+        <div class="filters-panel">
+          <div class="filter-group">
+            <label for="search-input">Пошук (назва або вправа)</label>
+            <input type="text" id="search-input" placeholder="Введіть фрагмент...">
+          </div>
+
+          <div class="filter-group">
+            <label for="filter-exercise">Вид вправи</label>
+            <select id="filter-exercise">
+              <option value="all">Усі вправи</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="filter-date-from">Дата від</label>
+            <input type="date" id="filter-date-from">
+          </div>
+
+          <div class="filter-group">
+            <label for="filter-date-to">Дата до</label>
+            <input type="date" id="filter-date-to">
+          </div>
+
+          <div class="filter-group">
+            <label for="sort-select">Сортування</label>
+            <select id="sort-select">
+              <option value="date-desc">Спочатку новіші</option>
+              <option value="date-asc">Спочатку старіші</option>
+              <option value="duration-desc">За тривалістю (спадання)</option>
+              <option value="volume-desc">За тоннажем (спадання)</option>
+            </select>
+          </div>
+
+          <div class="filter-group filter-reset-wrap">
+            <button type="button" id="reset-filters-btn" class="btn btn-outline">Скинути фільтри</button>
+          </div>
+        </div>
+
+        <!-- Контейнер, який наповнюється динамічно засобами DOM -->
+        <div id="workout-list" class="workout-list"></div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Семантичний тег 6: Нижній колонтитул -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; 2026 Лабораторна робота №1 з дисципліни «Технології веб-розробки» | Варіант 15</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
